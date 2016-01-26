@@ -1,0 +1,186 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Hslab.VirtualStructure;
+using Hslab.MathExpression;
+using Hslab.MeepManager.WaveguideDesigner;
+
+namespace Hslab.WaveguideDesigner.ProjectData
+	{
+
+	/// <summary>極座標系関数により構造を定義できるパス構造オブジェクト。</summary>
+	public class PolarCoordinateFunctionalPathData : PathStructureObjectData
+		{
+
+		#region properties
+
+
+
+		/// <summary>パス中心の距離の関数表現。パラメータt(0≦t≦1)を使用可能。</summary>
+		[PropertyEditorAttribute( 5, true ), CheckLastValidAttribute]
+		public string CenterRadius { get; set; }
+		/// <summary>CenterRadiusのLastValid。</summary>
+		public string CenterRadius_LastValid { get; set; }
+
+
+
+		/// <summary>パス中心の位相の関数表現。パラメータt(0≦t≦1)を使用可能。</summary>
+		[PropertyEditorAttribute( 6, true ), CheckLastValidAttribute]
+		public string CenterPhase { get; set; }
+		/// <summary>CenterPhaseのLastValid。</summary>
+		public string CenterPhase_LastValid { get; set; }
+
+
+
+
+		/// <summary>パスの左側太さの関数表現。パラメータt(0≦t≦1)を使用可能。<br />
+		/// [note] パスの左側とは、tが増加する方向に向かって左側であることを指す。
+		/// </summary>
+		[PropertyEditorAttribute( 7, true ), CheckLastValidAttribute]
+		public string LeftWingWidth { get; set; }
+		/// <summary>LeftWingWidthのLastValid。</summary>
+		public string LeftWingWidth_LastValid { get; set; }
+
+
+
+		/// <summary>パスの右側太さの関数表現。パラメータt(0≦t≦1)を使用可能。<br />
+		/// [note] パスの右側とは、tが増加する方向に向かって右側であることを指す。
+		/// </summary>
+		[PropertyEditorAttribute( 8, true ), CheckLastValidAttribute]
+		public string RightWingWidth { get; set; }
+		/// <summary>RightWingWidthのLastValid。</summary>
+		public string RightWingWidth_LastValid { get; set; }
+
+		#endregion
+
+
+
+
+
+
+		#region constructors
+
+		/// <summary>デフォルトコンストラクタ。</summary>
+		public PolarCoordinateFunctionalPathData()
+			{
+			VirtualShape = new VirtualPolygon();
+			Name = "PolarPath";
+			CenterRadius = "t";
+			CenterRadius_LastValid = "t";
+			CenterPhase = "0";
+			CenterPhase_LastValid = "0";
+			LeftWingWidth = "1";
+			LeftWingWidth_LastValid = "1";
+			RightWingWidth = "0";
+			RightWingWidth_LastValid = "0";
+			}
+
+		/// <summary>コピーコンストラクタ。</summary>
+		/// <param name="previous"></param>
+		public PolarCoordinateFunctionalPathData(PolarCoordinateFunctionalPathData previous)
+			: base( previous )
+			{
+			VirtualShape = new VirtualPolygon();
+			CenterRadius = previous.CenterRadius;
+			CenterRadius_LastValid = previous.CenterRadius_LastValid;
+			CenterPhase = previous.CenterPhase;
+			CenterPhase_LastValid = previous.CenterPhase_LastValid;
+			LeftWingWidth = previous.LeftWingWidth;
+			LeftWingWidth_LastValid = previous.LeftWingWidth_LastValid;
+			RightWingWidth = previous.RightWingWidth;
+			RightWingWidth_LastValid = previous.RightWingWidth_LastValid;
+			}
+
+
+		#endregion
+
+
+
+		#region methods
+
+
+
+		/// <summary></summary>
+		public override List<MeepGeometricObject> MakeMeepGeometricObject()
+			{
+			if( UpdateVirtualShape() && ( this.State & ObjectState.ForAnalysis ) != 0 )
+				{
+				MeepGeometricObjectMaker maker = new MeepGeometricObjectMaker( this.ParentLayer );
+				return new List<MeepGeometricObject>( maker.FromPolygon( ( (VirtualPolygon)VirtualShape ).Vertices ).Cast<MeepGeometricObject>() );
+				}
+			return null;
+			//throw new NotImplementedException();
+			}
+
+
+
+		/// <summary>定義されたプロパティに従ってVirtualShapeを更新する。GeometricObjectDataBaseの実装。</summary>
+		/// <returns>全てのプロパティが妥当であり、VirtualShapeの更新に成功したときはtrue。</returns>
+		public override bool UpdateVirtualShape()
+			{
+			VirtualPolygon polygon = (VirtualPolygon)VirtualShape;
+			polygon.Visible = true;
+
+			bool validOX = true, validOY = true, validR = true, validP = true, validLeft = true, validRight = true;
+			double xOffset, yOffset;
+			double[] CenterXList = new double[PointNum + 2],
+				CenterYList = new double[PointNum + 2],
+				CenterRadiusList = new double[PointNum + 2],
+				CenterPhaseList = new double[PointNum + 2],
+				LeftWingWidthList = new double[PointNum + 2],
+				RightWingWidthList = new double[PointNum + 2];
+
+
+			// 検証
+			ValidateFormula( XOffset, XOffset_LastValid, out xOffset, out validOX );
+			ValidateFormula( YOffset, YOffset_LastValid, out yOffset, out validOY );
+			ValidateFormula( CenterRadius, PointNum, CenterRadius_LastValid, CenterRadiusList, out validR );
+			ValidateFormula( CenterPhase, PointNum, CenterPhase_LastValid, CenterPhaseList, out validP );
+			ValidateFormula( LeftWingWidth, PointNum, LeftWingWidth_LastValid, LeftWingWidthList, out validLeft );
+			ValidateFormula( RightWingWidth, PointNum, RightWingWidth_LastValid, RightWingWidthList, out validRight );
+
+			// CenterX,CenterYの作成
+			for( int i = 0 ; i < PointNum + 2 ; i++ )
+				{
+				CenterXList[i] = CenterRadiusList[i] * Math.Cos( CenterPhaseList[i] );
+				CenterYList[i] = CenterRadiusList[i] * Math.Sin( CenterPhaseList[i] );
+				}
+
+			// IsValidの評価
+			IsValid = validOX && validOY && validR && validP && validLeft && validRight;
+			if( validOX ) XOffset_LastValid = XOffset;
+			if( validOY ) YOffset_LastValid = YOffset;
+			if( validR ) CenterRadius_LastValid = CenterRadius;
+			if( validP ) CenterPhase_LastValid = CenterPhase;
+			if( validLeft ) LeftWingWidth_LastValid = LeftWingWidth;
+			if( validRight ) RightWingWidth_LastValid = RightWingWidth;
+
+			// VirtualPolygonに頂点を反映
+			int j;
+			double normalAngle;
+			SizeD normalVector;
+			polygon.Vertices = new PointD[2 * PointNum];
+			for( int i = 0 ; i < PointNum ; i++ )
+				{
+				j = 2 * PointNum - i - 1;
+				normalAngle = Math.Atan2( CenterYList[i + 2] - CenterYList[i], CenterXList[i + 2] - CenterXList[i] ) + Math.PI / 2;
+				normalVector = new SizeD( Math.Cos( normalAngle ), Math.Sin( normalAngle ) );
+				polygon.Vertices[i] = new PointD( CenterXList[i + 1] + xOffset, CenterYList[i + 1] + yOffset ) + LeftWingWidthList[i + 1] * normalVector;
+				polygon.Vertices[j] = new PointD( CenterXList[i + 1] + xOffset, CenterYList[i + 1] + yOffset ) - RightWingWidthList[i + 1] * normalVector;
+				}
+
+			base.RefreshRenderSetting();
+			return IsValid;
+			}
+
+
+
+
+		#endregion
+
+
+		}
+
+	}
