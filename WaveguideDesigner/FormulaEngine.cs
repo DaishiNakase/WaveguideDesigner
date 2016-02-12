@@ -139,7 +139,7 @@ namespace Hslab.MathExpression
 		/// <returns></returns>
 		public double CalculateWithT(double t, string formula)
 			{
-			PythonEngine.Execute( "t=" + t.ToString(), PythonScope );
+			PythonEngine.Execute( "t=" + ( Math.Round( t ) == t ? t.ToString( "0.0" ) : t.ToString() ), PythonScope );
 			return Calculate( formula );
 			}
 

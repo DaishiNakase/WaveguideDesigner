@@ -141,16 +141,56 @@ namespace Hslab.WaveguideDesigner.ProjectData
 			private set
 				{
 				_FluxAnalyses = value;
-
-				value.ItemInserted += (obj, e) => { e.Item.Parent = this; };
+				
+				value.ItemInserted += (obj, e) =>
+				{
+					e.Item.Parent = this;
+					string name = e.Item.Name;
+					bool flag;
+					for( int i = 2 ; true ; i++ )
+						{
+						flag = true;
+						foreach( FluxAnalysisData otherFlux in FluxAnalyses )
+							if( otherFlux == e.Item ) continue;
+							else if( otherFlux.Name == name ) { flag = false; break; }
+						if( flag ) break;
+						name = e.Item.Name + i.ToString();
+						}
+					e.Item.Name = name;
+					ManifestVisualizingLayer.Shapes.Add( e.Item.VirtualShape );
+				};
 				value.ItemSet += (obj, e) =>
-					{
-						e.NewItem.Parent = this;
-						e.OldItem.Parent = null;
-
-					};
-				value.ItemRemoved += (obj, e) => { e.Item.Parent = null; };
-				value.ItemsCleared += (obj, e) => { foreach( FluxAnalysisData l in e.Items ) l.Parent = null; };
+				{
+					e.NewItem.Parent = this;
+					ManifestVisualizingLayer.Shapes.Add( e.NewItem.VirtualShape );
+					e.OldItem.Parent = null;
+					ManifestVisualizingLayer.Shapes.Remove( e.OldItem.VirtualShape );
+					string name = e.NewItem.Name;
+					bool flag;
+					for( int i = 2 ; true ; i++ )
+						{
+						flag = true;
+						foreach( FluxAnalysisData otherFlux in FluxAnalyses )
+							if( otherFlux == e.NewItem ) continue;
+							else if( otherFlux.Name == name ) { flag = false; break; }
+						if( flag ) break;
+						name = e.NewItem.Name + i.ToString();
+						}
+					e.NewItem.Name = name;
+				};
+				value.ItemRemoved += (obj, e) =>
+				{
+					e.Item.Parent = null;
+					ManifestVisualizingLayer.Shapes.Remove( e.Item.VirtualShape );
+				};
+				value.ItemsCleared += (obj, e) =>
+				{
+					foreach( FluxAnalysisData analysis in e.Items )
+						{
+						analysis.Parent = null;
+						ManifestVisualizingLayer.Shapes.Remove( analysis.VirtualShape );
+						}
+				};
 				}
 			}
 		private ProjectList<FluxAnalysisData> _FluxAnalyses;
@@ -265,6 +305,10 @@ namespace Hslab.WaveguideDesigner.ProjectData
 			foreach(SourceData src in Sources)
 				{
 				src.UpdateVirtualShape();
+				}
+			foreach(FluxAnalysisData analysis in FluxAnalyses)
+				{
+				analysis.UpdateVirtualShape();
 				}
 			}
 

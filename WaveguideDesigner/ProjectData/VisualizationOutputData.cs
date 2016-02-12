@@ -109,6 +109,17 @@ namespace Hslab.WaveguideDesigner.ProjectData
 			}
 
 
+
+		public override string GetDescription()
+			{
+			string res = "";
+			res += "time step : " + TimeStep + "\r\n";
+			res += "location  : " + Center + "\r\n";
+			res += "size      : " + Size + "\r\n";
+			return res;
+			}
+
+
 		#endregion
 		}
 

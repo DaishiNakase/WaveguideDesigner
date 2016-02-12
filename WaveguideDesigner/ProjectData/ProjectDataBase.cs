@@ -48,6 +48,12 @@ namespace Hslab.WaveguideDesigner.ProjectData
 
 
 
+		public virtual string GetDescription()
+			{
+			return "";
+			}
+
+
 		/// <summary>このオブジェクトのディープコピーを返す。</summary>
 		/// <returns></returns>
 		public ProjectDataBase DeepClone()

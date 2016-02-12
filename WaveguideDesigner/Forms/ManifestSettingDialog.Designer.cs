@@ -107,7 +107,7 @@
 			// buttonOK
 			// 
 			this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonOK.Location = new System.Drawing.Point(375, 406);
+			this.buttonOK.Location = new System.Drawing.Point(375, 486);
 			this.buttonOK.Name = "buttonOK";
 			this.buttonOK.Size = new System.Drawing.Size(75, 23);
 			this.buttonOK.TabIndex = 0;
@@ -119,7 +119,7 @@
 			// 
 			this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.buttonCancel.Location = new System.Drawing.Point(537, 406);
+			this.buttonCancel.Location = new System.Drawing.Point(537, 486);
 			this.buttonCancel.Name = "buttonCancel";
 			this.buttonCancel.Size = new System.Drawing.Size(75, 23);
 			this.buttonCancel.TabIndex = 2;
@@ -132,7 +132,7 @@
 			this.separator01.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.separator01.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.separator01.Location = new System.Drawing.Point(6, 399);
+			this.separator01.Location = new System.Drawing.Point(6, 479);
 			this.separator01.Name = "separator01";
 			this.separator01.Size = new System.Drawing.Size(612, 1);
 			this.separator01.TabIndex = 2;
@@ -140,7 +140,7 @@
 			// buttonApply
 			// 
 			this.buttonApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonApply.Location = new System.Drawing.Point(456, 406);
+			this.buttonApply.Location = new System.Drawing.Point(456, 486);
 			this.buttonApply.Name = "buttonApply";
 			this.buttonApply.Size = new System.Drawing.Size(75, 23);
 			this.buttonApply.TabIndex = 1;
@@ -492,6 +492,8 @@
 			// tabControl
 			// 
 			this.tabControl.Alignment = System.Windows.Forms.TabAlignment.Left;
+			this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
 			this.tabControl.Controls.Add(this.tabPageSources);
 			this.tabControl.Controls.Add(this.tabPageFluxAnalyses);
 			this.tabControl.Controls.Add(this.tabPageVisualizationOutputs);
@@ -499,7 +501,7 @@
 			this.tabControl.Multiline = true;
 			this.tabControl.Name = "tabControl";
 			this.tabControl.SelectedIndex = 0;
-			this.tabControl.Size = new System.Drawing.Size(348, 302);
+			this.tabControl.Size = new System.Drawing.Size(348, 343);
 			this.tabControl.TabIndex = 5;
 			// 
 			// tabPageSources
@@ -509,7 +511,7 @@
 			this.tabPageSources.Location = new System.Drawing.Point(25, 4);
 			this.tabPageSources.Name = "tabPageSources";
 			this.tabPageSources.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageSources.Size = new System.Drawing.Size(319, 294);
+			this.tabPageSources.Size = new System.Drawing.Size(319, 335);
 			this.tabPageSources.TabIndex = 0;
 			this.tabPageSources.Text = "Sources";
 			this.tabPageSources.UseVisualStyleBackColor = true;
@@ -521,7 +523,7 @@
 			this.listBoxSrc.ItemHeight = 15;
 			this.listBoxSrc.Location = new System.Drawing.Point(3, 28);
 			this.listBoxSrc.Name = "listBoxSrc";
-			this.listBoxSrc.Size = new System.Drawing.Size(313, 263);
+			this.listBoxSrc.Size = new System.Drawing.Size(313, 304);
 			this.listBoxSrc.TabIndex = 1;
 			this.listBoxSrc.SelectedIndexChanged += new System.EventHandler(this.listBox_SelectedIndexChanged);
 			this.listBoxSrc.DoubleClick += new System.EventHandler(this.listBox_DoubleClick);
@@ -739,10 +741,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.labelDescription.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.labelDescription.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-			this.labelDescription.Location = new System.Drawing.Point(295, 317);
+			this.labelDescription.Location = new System.Drawing.Point(295, 363);
 			this.labelDescription.Name = "labelDescription";
 			this.labelDescription.Padding = new System.Windows.Forms.Padding(1, 3, 1, 3);
-			this.labelDescription.Size = new System.Drawing.Size(316, 76);
+			this.labelDescription.Size = new System.Drawing.Size(316, 110);
 			this.labelDescription.TabIndex = 6;
 			// 
 			// panel2
@@ -752,7 +754,7 @@
 			this.panel2.BackColor = System.Drawing.SystemColors.ActiveBorder;
 			this.panel2.Location = new System.Drawing.Point(263, 12);
 			this.panel2.Name = "panel2";
-			this.panel2.Size = new System.Drawing.Size(1, 381);
+			this.panel2.Size = new System.Drawing.Size(1, 461);
 			this.panel2.TabIndex = 7;
 			// 
 			// ManifestSettingDialog
@@ -760,7 +762,7 @@
 			this.AcceptButton = this.buttonOK;
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.CancelButton = this.buttonCancel;
-			this.ClientSize = new System.Drawing.Size(624, 441);
+			this.ClientSize = new System.Drawing.Size(624, 521);
 			this.Controls.Add(this.panel2);
 			this.Controls.Add(this.labelDescription);
 			this.Controls.Add(this.tabControl);

@@ -219,10 +219,14 @@ namespace Hslab.WaveguideDesigner
 
 
 
-		public FluxAnalysisEditorDialogText FluxAnalysisEditoDialog { get; set; } = new FluxAnalysisEditorDialogText();
+		public FluxAnalysisEditorDialogText FluxAnalysisEditorDialog { get; set; } = new FluxAnalysisEditorDialogText();
 		public class FluxAnalysisEditorDialogText
 			{
 			public string Text { get; set; } = "流束解析の設定";
+			public string LabelName { get; set; } = "名前";
+			public string LabelCenterWavelength { get; set; } = "中心波長 [nm]";
+			public string LabelWavelengthSpan { get; set; } = "波長範囲 [nm]";
+			public string LabelPointNum { get; set; } = "点数";
 			public string LabelFluxDirection { get; set; } = "流束の向き";
 			public string LabelCenter { get; set; } = "位置";
 			public string LabelSize { get; set; } = "サイズ";

@@ -84,11 +84,35 @@ namespace Hslab.WaveguideDesigner.ProjectData
 				value.ItemInserted += (obj, e) =>
 				{
 					e.Item.Parent = this;
+					string name = e.Item.Name;
+					bool flag;
+					for( int i = 2 ; true ; i++ )
+						{
+						flag = true;
+						foreach( MaterialData otherMat in Materials )
+							if( otherMat == e.Item ) continue;
+							else if( otherMat.Name == name ) { flag = false; break; }
+						if( flag ) break;
+						name = e.Item.Name + i.ToString();
+						}
+					e.Item.Name = name;
 				};
 				value.ItemSet += (obj, e) =>
 				{
 					e.NewItem.Parent = this;
 					e.OldItem.Parent = null;
+					string name = e.NewItem.Name;
+					bool flag;
+					for( int i = 2 ; true ; i++ )
+						{
+						flag = true;
+						foreach( MaterialData otherMat in Materials )
+							if( otherMat == e.NewItem ) continue;
+							else if( otherMat.Name == name ) { flag = false; break; }
+						if( flag ) break;
+						name = e.NewItem.Name + i.ToString();
+						}
+					e.NewItem.Name = name;
 				};
 				value.ItemRemoved += (obj, e) =>
 				{
@@ -302,6 +326,8 @@ namespace Hslab.WaveguideDesigner.ProjectData
 			engine.GlobalShift = -ProjectManifest.SimulationRegion.Center;
 			engine.PmlLayers.Add( new MeepPml( ProjectManifest.SimulationRegion.PmlThickness ) );
 			engine.Resolution = ProjectManifest.Resolution;
+			foreach( FluxAnalysisData analysis in ProjectManifest.FluxAnalyses )
+				engine.FluxAnalyses.Add( analysis.MakeMeepFlux() );
 			MeepRunFunction run = MeepRunFunction.RunUntil( ProjectManifest.SimulationTime );
 			foreach( VisualizationOutputData vis in ProjectManifest.VisualizationOutputs )
 				run.StepFunctions.AddRange( vis.MakeMeepStepFunction() );

@@ -210,48 +210,14 @@ namespace Hslab.WaveguideDesigner.Forms
 		private void listBox_SelectedIndexChanged(object sender, EventArgs e)
 			{
 			ListBox box = sender as ListBox;
-			string res = "";
-			if( !( box.SelectedItem is ProjectDataBase ) ) { }
-			else if( box == listBoxSrc ) res = MakeSourceDataDescription( box.SelectedItem as SourceData );
-			else if( box == listBoxFlx ) res = MakeFluxAnalysisDataDescription( box.SelectedItem as FluxAnalysisData );
-			else if( box == listBoxVis ) res = MakeVisualizationOutputDataDescription( box.SelectedItem as VisualizationOutputData );
-			labelDescription.Text = res;
+			labelDescription.Text = ( box.SelectedItem as ProjectDataBase )?.GetDescription() ?? "";
 			}
 
+		
 
+		
 
-		private string MakeSourceDataDescription(SourceData data)
-			{
-			string res = "";
-			res += "name       : " + data.Name + "\r\n";
-			res += "type       : " + data.Type + "\r\n";
-			res += "wavelength : " + data.Wavelength + "\r\n";
-			res += "center     : " + data.Center + "\r\n";
-			return res;
-			}
-
-
-
-		private string MakeFluxAnalysisDataDescription(FluxAnalysisData data)
-			{
-			string res = "";
-			res += "location  : " + data.Center + "\r\n";
-			res += "size      : " + data.Size + "\r\n";
-			res += "direction : " + data.FluxDirection + "\r\n";
-			return res;
-			}
-
-
-
-		private string MakeVisualizationOutputDataDescription(VisualizationOutputData data)
-			{
-			string res = "";
-			res += "time step : " + data.TimeStep + "\r\n";
-			res += "location  : " + data.Center + "\r\n";
-			res += "size      : " + data.Size + "\r\n";
-			return res;
-			}
-
+		
 
 
 		private void listBox_DoubleClick(object sender, EventArgs e)

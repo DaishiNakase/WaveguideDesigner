@@ -185,7 +185,7 @@ namespace Hslab.WaveguideDesigner.ProjectData
 
 		public override string ToString()
 			{
-			return base.ToString();
+			return Name;
 			}
 
 
@@ -276,6 +276,18 @@ namespace Hslab.WaveguideDesigner.ProjectData
 			if( ( Parent as ProjectManifestData ) != null )
 				if( !( Parent as ProjectManifestData ).ManifestVisualizingLayer.Shapes.Contains( VirtualShape ) )
 					( Parent as ProjectManifestData ).ManifestVisualizingLayer.Shapes.Add( VirtualShape );
+			}
+
+
+
+		public override string GetDescription()
+			{
+			string res = "";
+			res += "name       : " + Name + "\r\n";
+			res += "type       : " + Type + "\r\n";
+			res += "wavelength : " + Wavelength + "\r\n";
+			res += "center     : " + Center + "\r\n";
+			return res;
 			}
 
 		#endregion

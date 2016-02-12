@@ -31,7 +31,7 @@ namespace Hslab.MeepManager.WaveguideDesigner
 
 		public override string ToString()
 			{
-			string res = "(flux-region";
+			string res = "(make flux-region";
 			res += string.Format( " (center {0})",Center.ToString() );
 			if( Size != MeepVector3.Zero ) res += string.Format( " (size {0})", Size.ToString() );
 			if( Direction != Direction.Automatic ) res += string.Format( " (direction {0})", Direction.ToStringEx() );

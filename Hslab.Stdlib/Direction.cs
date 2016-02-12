@@ -6,13 +6,13 @@ using System.Text;
 namespace Hslab
 	{
 	/// <summary>方向。</summary>
-	public enum Direction
+	public enum Direction:int
 		{
 		/// <summary>X。</summary>
-		X,
+		X=1,
 		/// <summary>Y。</summary>
-		Y,
+		Y=2,
 		/// <summary>Z。</summary>
-		Z,
+		Z=3,
 		}
 	}

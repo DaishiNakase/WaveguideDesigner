@@ -40,6 +40,8 @@ namespace Hslab.MeepManager.WaveguideDesigner
 			FrequencyStep = freqencyStep;
 			StepCount = stepCount;
 			FluxRegions = new FluxRegionCollection();
+			foreach( MeepFluxRegion region in fluxRegions )
+				FluxRegions.Add( region );
 			}
 
 

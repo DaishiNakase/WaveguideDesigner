@@ -29,7 +29,7 @@
 		private void InitializeComponent()
 			{
 			this.components = new System.ComponentModel.Container();
-			Hslab.VirtualStructure.VirtualGraphics virtualGraphics2 = new Hslab.VirtualStructure.VirtualGraphics();
+			Hslab.VirtualStructure.VirtualGraphics virtualGraphics1 = new Hslab.VirtualStructure.VirtualGraphics();
 			this.toolStrip = new System.Windows.Forms.ToolStrip();
 			this.scalePerspectiveToolStripButton = new System.Windows.Forms.ToolStripButton();
 			this.scaleUpToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -43,18 +43,18 @@
 			this.polarCorrdinateFunctionalPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.tableDefinablePathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.delGeometricObjectToolStripButton = new System.Windows.Forms.ToolStripButton();
-			this.viewer = new Hslab.VirtualStructure.StructureViewer();
-			this.statusStrip = new System.Windows.Forms.StatusStrip();
-			this.toolStripStatusLabel01 = new System.Windows.Forms.ToolStripStatusLabel();
-			this.toolStripStatusLabel02 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.statusStrip = new System.Windows.Forms.StatusStrip();
+			this.toolStripStatusLabel01 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripStatusLabel02 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.viewer = new Hslab.VirtualStructure.StructureViewer();
 			this.toolStrip.SuspendLayout();
-			this.statusStrip.SuspendLayout();
 			this.contextMenuStrip.SuspendLayout();
+			this.statusStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// toolStrip
@@ -190,42 +190,6 @@
 			this.delGeometricObjectToolStripButton.ToolTipText = "delete geometric object";
 			this.delGeometricObjectToolStripButton.Click += new System.EventHandler(this.delGeometricObjectToolStripButton_Click);
 			// 
-			// viewer
-			// 
-			this.viewer.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.viewer.Location = new System.Drawing.Point(0, 25);
-			this.viewer.Name = "viewer";
-			this.viewer.Size = new System.Drawing.Size(464, 296);
-			this.viewer.TabIndex = 1;
-			virtualGraphics2.AxesLine = null;
-			virtualGraphics2.Background = System.Drawing.Color.Black;
-			this.viewer.VirtualGraphics = virtualGraphics2;
-			this.viewer.MouseClick += new System.Windows.Forms.MouseEventHandler(this.viewer_MouseClick);
-			this.viewer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.viewer_MouseMove);
-			// 
-			// statusStrip
-			// 
-			this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel01,
-            this.toolStripStatusLabel02});
-			this.statusStrip.Location = new System.Drawing.Point(0, 299);
-			this.statusStrip.Name = "statusStrip";
-			this.statusStrip.Size = new System.Drawing.Size(464, 22);
-			this.statusStrip.TabIndex = 2;
-			this.statusStrip.Text = "statusStrip1";
-			// 
-			// toolStripStatusLabel01
-			// 
-			this.toolStripStatusLabel01.Name = "toolStripStatusLabel01";
-			this.toolStripStatusLabel01.Size = new System.Drawing.Size(89, 17);
-			this.toolStripStatusLabel01.Text = "(0.000, 0.000)";
-			// 
-			// toolStripStatusLabel02
-			// 
-			this.toolStripStatusLabel02.Name = "toolStripStatusLabel02";
-			this.toolStripStatusLabel02.Size = new System.Drawing.Size(15, 17);
-			this.toolStripStatusLabel02.Text = "  ";
-			// 
 			// contextMenuStrip
 			// 
 			this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -264,20 +228,54 @@
 			this.deleteToolStripMenuItem.Text = "&Delete";
 			this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
 			// 
+			// statusStrip
+			// 
+			this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel01,
+            this.toolStripStatusLabel02});
+			this.statusStrip.Location = new System.Drawing.Point(0, 299);
+			this.statusStrip.Name = "statusStrip";
+			this.statusStrip.Size = new System.Drawing.Size(464, 22);
+			this.statusStrip.TabIndex = 3;
+			this.statusStrip.Text = "statusStrip1";
+			// 
+			// toolStripStatusLabel01
+			// 
+			this.toolStripStatusLabel01.Name = "toolStripStatusLabel01";
+			this.toolStripStatusLabel01.Size = new System.Drawing.Size(89, 17);
+			this.toolStripStatusLabel01.Text = "(0.000, 0.000)";
+			// 
+			// toolStripStatusLabel02
+			// 
+			this.toolStripStatusLabel02.Name = "toolStripStatusLabel02";
+			this.toolStripStatusLabel02.Size = new System.Drawing.Size(15, 17);
+			this.toolStripStatusLabel02.Text = "  ";
+			// 
+			// viewer
+			// 
+			this.viewer.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.viewer.Location = new System.Drawing.Point(0, 25);
+			this.viewer.Name = "viewer";
+			this.viewer.Size = new System.Drawing.Size(464, 274);
+			this.viewer.TabIndex = 4;
+			virtualGraphics1.AxesLine = null;
+			virtualGraphics1.Background = System.Drawing.Color.Black;
+			this.viewer.VirtualGraphics = virtualGraphics1;
+			// 
 			// StructureViewer
 			// 
 			this.ClientSize = new System.Drawing.Size(464, 321);
-			this.Controls.Add(this.statusStrip);
 			this.Controls.Add(this.viewer);
+			this.Controls.Add(this.statusStrip);
 			this.Controls.Add(this.toolStrip);
 			this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Name = "StructureViewer";
 			this.Text = "Structure Viewer";
 			this.toolStrip.ResumeLayout(false);
 			this.toolStrip.PerformLayout();
+			this.contextMenuStrip.ResumeLayout(false);
 			this.statusStrip.ResumeLayout(false);
 			this.statusStrip.PerformLayout();
-			this.contextMenuStrip.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -286,10 +284,6 @@
 		#endregion
 
 		private System.Windows.Forms.ToolStrip toolStrip;
-		private VirtualStructure.StructureViewer viewer;
-		private System.Windows.Forms.StatusStrip statusStrip;
-		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel01;
-		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel02;
 		private System.Windows.Forms.ToolStripButton scalePerspectiveToolStripButton;
 		private System.Windows.Forms.ToolStripButton scaleUpToolStripButton;
 		private System.Windows.Forms.ToolStripButton scaleDownToolStripButton;
@@ -307,5 +301,9 @@
 		private System.Windows.Forms.ToolStripButton newLayerToolStripButton;
 		private System.Windows.Forms.ToolStripButton delLayerToolStripButton;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+		private System.Windows.Forms.StatusStrip statusStrip;
+		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel01;
+		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel02;
+		private VirtualStructure.StructureViewer viewer;
 		}
 	}

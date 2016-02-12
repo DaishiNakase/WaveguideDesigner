@@ -293,12 +293,19 @@ namespace Hslab.WaveguideDesigner
 			targetProperty.SetValue( targetObject, newValue );
 
 			// Undo/Redoの言語対応文字列を取得する
-			PropertyInfo urStringContainerGetter = typeof( LanguagePack ).GetProperty( targetObject.GetType().Name )
-				?? typeof( LanguagePack ).GetProperty( targetProperty.DeclaringType.Name );
-			object container = urStringContainerGetter?.GetValue( CurrentLanguage );
-			PropertyInfo urStringGetter = container?.GetType().GetProperty( targetProperty.Name + "Changed" );
-			UndoRedoPairString urString = urStringGetter.GetValue( container ) as UndoRedoPairString
-				?? CurrentLanguage.ProjectDataBase_PropertyChangedDefault;
+			UndoRedoPairString urString;
+			try
+				{
+				PropertyInfo urStringContainerGetter = typeof( LanguagePack ).GetProperty( targetObject.GetType().Name )
+					?? typeof( LanguagePack ).GetProperty( targetProperty.DeclaringType.Name );
+				object container = urStringContainerGetter?.GetValue( CurrentLanguage );
+				PropertyInfo urStringGetter = container?.GetType().GetProperty( targetProperty.Name + "Changed" );
+				urString = urStringGetter.GetValue( container ) as UndoRedoPairString;
+				}
+			catch
+				{
+				urString = CurrentLanguage.ProjectDataBase_PropertyChangedDefault;
+				}
 
 			// Undo/Redoの作成
 			Action undo = () => { targetProperty.SetValue( targetObject, oldValue ); };
@@ -1026,8 +1033,8 @@ namespace Hslab.WaveguideDesigner
 				}
 			try
 				{
-				DxfWriter dw = new DxfWriter(path);
-				dw.WriteProject(OpenedProject);
+				DxfWriter dw = new DxfWriter( path );
+				dw.WriteProject( OpenedProject );
 				}
 			catch
 				{
