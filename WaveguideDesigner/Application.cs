@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Runtime.CompilerServices;
 
 namespace Hslab.WaveguideDesigner
 	{
@@ -234,8 +235,7 @@ namespace Hslab.WaveguideDesigner
 				LogWriter = new StreamWriter( "WaveguideDesigner.log" );
 				}
 			catch { MessageBox.Show( "ログファイルを開けませんでした。ログ出力はされません。", "", MessageBoxButtons.OK, MessageBoxIcon.Error ); }
-			string methodName = "Application.EntryPoint";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 
 			CurrentUndoDepth = 0;
 			FormulaEngine = new FormulaEngine();
@@ -257,7 +257,7 @@ namespace Hslab.WaveguideDesigner
 				WriteLog( e.ToString() );
 				}
 
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			LogWriter?.Dispose();
 			}
 
@@ -269,16 +269,10 @@ namespace Hslab.WaveguideDesigner
 		/// <param name="newValue"></param>
 		public void ChangeProperty(object targetObject, PropertyInfo targetProperty, object newValue)
 			{
-			string methodName = "Application.ChangeProperty";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			WriteLog( GetIndents( 1 ) + "target object   : " + targetObject.ToString() );
 			WriteLog( GetIndents( 1 ) + "target property : " + targetProperty.DeclaringType.FullName + "." + targetProperty.Name );
 			WriteLog( GetIndents( 1 ) + "new value       : " + newValue.ToString() );
-			_ChangeProperty( targetObject, targetProperty, newValue );
-			WriteEndMethodLog( methodName );
-			}
-		private void _ChangeProperty(object targetObject, PropertyInfo targetProperty, object newValue)
-			{
 			// targetObjectがtargetPropertyを持たないクラスであればArgumentExceptionをスローする。
 			if( !IsTypeOf( targetObject, targetProperty.DeclaringType ) )
 				throw new ArgumentException( "Type of targetObject doesn't have property of targetProperty." );
@@ -312,6 +306,7 @@ namespace Hslab.WaveguideDesigner
 			Action redo = () => { targetProperty.SetValue( targetObject, newValue ); };
 			UndoRedoPair urPair = new UndoRedoPair( urString, undo, redo );
 			AddUndoRedoPair( urPair );
+			LogMethodEnd();
 			}
 
 
@@ -319,13 +314,7 @@ namespace Hslab.WaveguideDesigner
 		/// <summary>FormulaEngineに登録されている変数・関数を更新する。</summary>
 		public void UpdateNumericsSetting()
 			{
-			string methodName = "Application.UpdateNumericsSetting";
-			WriteStartMethodLog( methodName );
-			_UpdateNumericsSetting();
-			WriteEndMethodLog( methodName );
-			}
-		private void _UpdateNumericsSetting()
-			{
+			LogMethodStart();
 			GlobalStructureNumericsData numerics = OpenedProject.GlobalStructureNumerics;
 			FormulaEngine.VariablesList.Clear();
 			FormulaEngine.CustomFuncList.Clear();
@@ -334,6 +323,7 @@ namespace Hslab.WaveguideDesigner
 			foreach( FunctionData func in numerics.Functions )
 				FormulaEngine.CustomFuncList.Add( func.GetMathFunction() );
 			FormulaEngine.InitializeInterpreter();
+			LogMethodEnd();
 			}
 
 
@@ -342,18 +332,11 @@ namespace Hslab.WaveguideDesigner
 		/// <param name="updateShape"></param>
 		public void ValidateGeometricObjects(bool updateShape)
 			{
-			string methodName = "Application.ValidateGeometricObjects";
-			WriteStartMethodLog( methodName );
-			_ValidateGeometricObjects( updateShape );
-			WriteEndMethodLog( methodName );
-			}
-		private void _ValidateGeometricObjects(bool updateShape)
-			{
+			LogMethodStart();
+
 			if( OpenedProject == null ) return;
 			if( UpdateShape_Running ) return;
 			UpdateShape_Running = true;
-
-
 			bool isValid = true;
 			if( updateShape )
 				{
@@ -371,8 +354,9 @@ namespace Hslab.WaveguideDesigner
 			else
 				foreach( GeometricObjectDataBase obj in OpenedProject.GeometricObjects )
 					obj.RefreshRenderSetting();
-
 			UpdateShape_Running = false;
+
+			LogMethodEnd();
 			}
 		private bool UpdateShape_Running = false;
 
@@ -382,13 +366,8 @@ namespace Hslab.WaveguideDesigner
 		/// <param name="updateShape">構造オブジェクトの再計算をすべて行うならtrue。計算コストが重いため省略できるように用意された引数。</param>
 		public void ValidateProject(bool updateShape)
 			{
-			string methodName = "Application.ValidateProject";
-			WriteStartMethodLog( methodName );
-			_ValidateProject( updateShape );
-			WriteEndMethodLog( methodName );
-			}
-		private void _ValidateProject(bool updateShape)
-			{
+			LogMethodStart();
+
 			if( ProjectValidating != null ) ProjectValidating( this, EventArgs.Empty );
 			if( ValidateProjectRunning ) return;
 			ValidateProjectRunning = true;
@@ -404,6 +383,8 @@ namespace Hslab.WaveguideDesigner
 			if( ProjectValidated != null ) ProjectValidated( this, EventArgs.Empty );
 
 			ValidateProjectRunning = false;
+
+			LogMethodEnd();
 			}
 
 
@@ -490,17 +471,18 @@ namespace Hslab.WaveguideDesigner
 		/// <returns>ファイルの作成が完了したらtrue。キャンセルされたり、失敗したらfalse。</returns>
 		public bool CreateProject()
 			{
-			string methodName = "Application.CreateProject";
-			WriteStartMethodLog( methodName );
-			bool res = _CreateProject();
-			WriteEndMethodLog( methodName );
+			LogMethodStart();
+
+			bool res;
+			if( !CloseProject() ) res = false;
+			else
+				{
+				res = true;
+				OpenedProject = new WaveguideDesignerProjectData();
+				}
+
+			LogMethodEnd();
 			return res;
-			}
-		private bool _CreateProject()
-			{
-			if( !CloseProject() ) return false;
-			OpenedProject = new WaveguideDesignerProjectData();
-			return true;
 			}
 
 
@@ -514,10 +496,9 @@ namespace Hslab.WaveguideDesigner
 		/// <returns>ファイルの読み込みが完了したらtrue。キャンセルされたり、失敗したらfalse。</returns>
 		public bool OpenProject(string filename)
 			{
-			string methodName = "Application.OpenProject";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			bool res = _OpenProject( filename );
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			return res;
 			}
 		private bool _OpenProject(string filename)
@@ -554,10 +535,9 @@ namespace Hslab.WaveguideDesigner
 		/// <returns>ファイルの保存が完了したらtrue。キャンセルされたり、失敗したらfalse。</returns>
 		public bool SaveProject(string filename)
 			{
-			string methodName = "Application.SaveProject";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			bool res = _SaveProject( filename );
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			return res;
 			}
 		private bool _SaveProject(string filename)
@@ -582,10 +562,9 @@ namespace Hslab.WaveguideDesigner
 		/// <returns>ファイルの終了が完了したらtrue。キャンセルされたり、失敗したらfalse。</returns>
 		public bool CloseProject()
 			{
-			string methodName = "Application.CloseProject";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			bool res = _CloseProject();
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			return res;
 			}
 		private bool _CloseProject()
@@ -611,10 +590,9 @@ namespace Hslab.WaveguideDesigner
 		/// <summary></summary>
 		public void Quit()
 			{
-			string methodName = "Application.Quit";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			_Quit();
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			}
 		private void _Quit()
 			{
@@ -633,10 +611,10 @@ namespace Hslab.WaveguideDesigner
 		private void AddUndoRedoPair(UndoRedoPair pair)
 			{
 			string methodName = "Application.AddUndoRedoPair";
-			WriteStartMethodLog( methodName );
+			LogMethodStart( methodName );
 			WriteLog( GetIndents( 1 ) + "pair : " + pair.ToString() );
 			_AddUndoRedoPair( pair );
-			WriteEndMethodLog( methodName );
+			LogMethodEnd( methodName );
 			}
 		private void _AddUndoRedoPair(UndoRedoPair pair)
 			{
@@ -656,10 +634,9 @@ namespace Hslab.WaveguideDesigner
 		/// <returns>これ以上Undoできなかった場合はfalseが返る。</returns>
 		public bool Undo(bool doesValidate)
 			{
-			string methodName = "Application.Undo";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			bool res = _Undo( doesValidate );
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			WriteLog( GetIndents( 1 ) + "return : " + res.ToString() );
 			return res;
 			}
@@ -684,10 +661,9 @@ namespace Hslab.WaveguideDesigner
 		/// <returns>これ以上Redoできなかった場合はfalseが返る。</returns>
 		public bool Redo(bool doesValidate)
 			{
-			string methodName = "Application.Redo";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			bool res = _Redo( doesValidate );
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			WriteLog( GetIndents( 1 ) + "return : " + res.ToString() );
 			return res;
 			}
@@ -708,10 +684,9 @@ namespace Hslab.WaveguideDesigner
 		/// <returns></returns>
 		public bool ShowUndoRedoList()
 			{
-			string methodName = "Application.ShowUndoRedoList";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			bool res = _ShowUndoRedoList();
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			WriteLog( GetIndents( 1 ) + "return : " + res.ToString() );
 			return res;
 			}
@@ -733,10 +708,9 @@ namespace Hslab.WaveguideDesigner
 		/// <returns>指定された回数だけUndo/Redoすることができず停止した場合はfalseが返る。</returns>
 		public bool UndoRedo(int depthShift)
 			{
-			string methodName = "Application.UndoRedo";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			bool res = _UndoRedo( depthShift );
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			WriteLog( GetIndents( 1 ) + "return : " + res.ToString() );
 			return res;
 			}
@@ -765,10 +739,9 @@ namespace Hslab.WaveguideDesigner
 		/// <summary>選択中のデータを上位データからカットしてクリップボードに保存する。構造オブジェクトにのみ適用。</summary>
 		public void Cut()
 			{
-			string methodName = "Application.Cut";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			_Cut();
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			}
 		private void _Cut()
 			{
@@ -796,10 +769,9 @@ namespace Hslab.WaveguideDesigner
 		/// <summary>選択中のデータをコピーしてクリップボードに保存する。構造オブジェクトにのみ適用。</summary>
 		public void Copy()
 			{
-			string methodName = "Application.Copy";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			_Copy();
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			}
 		private void _Copy()
 			{
@@ -812,10 +784,9 @@ namespace Hslab.WaveguideDesigner
 		/// <summary>選択中のクリップボードを選択中のデータにペーストする。構造オブジェクトにのみ適用。</summary>
 		public void Paste()
 			{
-			string methodName = "Application.Paste";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			_Paste();
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			}
 		private void _Paste()
 			{
@@ -846,10 +817,9 @@ namespace Hslab.WaveguideDesigner
 		/// <param name="data"></param>
 		public void Delete(ProjectDataBase data)
 			{
-			string methodName = "Application.Delete";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			_Delete( data );
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			}
 		private void _Delete(ProjectDataBase data)
 			{
@@ -901,10 +871,9 @@ namespace Hslab.WaveguideDesigner
 		/// <param name="layer"></param>
 		public LayerData AddLayer(LayerData layer)
 			{
-			string methodName = "Application.AddLayer";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			_AddLayer( layer );
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			return layer;
 			}
 		private void _AddLayer(LayerData layer)
@@ -926,10 +895,9 @@ namespace Hslab.WaveguideDesigner
 		/// <param name="obj"></param>
 		public GeometricObjectDataBase AddGeometricObject(GeometricObjectDataBase obj)
 			{
-			string methodName = "Application.AddGeometricObject";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			_AddGeometricObject( obj );
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			return obj;
 			}
 		private void _AddGeometricObject(GeometricObjectDataBase obj)
@@ -947,10 +915,9 @@ namespace Hslab.WaveguideDesigner
 		/// <summary>RectangleCoordinateFunctionalPathを作成して追加する。</summary>
 		public RectangleCoordinateFunctionalPathData AddRectangleCoordinateFunctionalPathObject()
 			{
-			string methodName = "Application.AddRectangleCoordinateFunctionalPathObject";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			RectangleCoordinateFunctionalPathData res = _AddRectangleCoordinateFunctionalPathObject();
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			return res;
 			}
 		private RectangleCoordinateFunctionalPathData _AddRectangleCoordinateFunctionalPathObject()
@@ -965,10 +932,9 @@ namespace Hslab.WaveguideDesigner
 		/// <summary>PolarCoordinateFunctionalPathを追加する。</summary>
 		public PolarCoordinateFunctionalPathData AddPolarCoordinateFunctionalPathObject()
 			{
-			string methodName = "Application.AddPolarCoordinateFunctionalPathObject";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			PolarCoordinateFunctionalPathData res = _AddPolarCoordinateFunctionalPathObject();
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			return res;
 			}
 		private PolarCoordinateFunctionalPathData _AddPolarCoordinateFunctionalPathObject()
@@ -983,10 +949,9 @@ namespace Hslab.WaveguideDesigner
 		/// <summary>TableDefinablePathを追加する。</summary>
 		public CoordinateListPathData AddCoordinateListPathObject()
 			{
-			string methodName = "Application.AddTableDefinablePathObject";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			CoordinateListPathData res = _AddCoordinateListPathObject();
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			return res;
 			}
 		private CoordinateListPathData _AddCoordinateListPathObject()
@@ -1013,10 +978,9 @@ namespace Hslab.WaveguideDesigner
 			}
 		public bool OutputDxf(string filename)
 			{
-			string methodName = "Application.OutputDxf";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			bool res = outputDxf( filename );
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			WriteLog( GetIndents( 1 ) + "return : " + res.ToString() );
 			return res;
 			}
@@ -1052,11 +1016,9 @@ namespace Hslab.WaveguideDesigner
 
 		public void OutputCtlFile()
 			{
-			string methodName = "Application.OutputCtlFile";
-
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			_OutputCtlFile();
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			}
 		private void _OutputCtlFile()
 			{
@@ -1084,10 +1046,9 @@ namespace Hslab.WaveguideDesigner
 
 		public bool ShowMaterialEditorDialog(IWin32Window owner)
 			{
-			string methodName = "Application.ShowMaterialEditorDialog";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			bool res = _ShowMaterialEditorDialog( owner );
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			return res;
 			}
 		public bool _ShowMaterialEditorDialog(IWin32Window owner)
@@ -1105,10 +1066,9 @@ namespace Hslab.WaveguideDesigner
 		/// <summary>バージョン情報を表示する。</summary>
 		public void ShowVersionInfo()
 			{
-			string methodName = "Application.ShowVersionInfo";
-			WriteStartMethodLog( methodName );
+			LogMethodStart();
 			_ShowVersionInfo();
-			WriteEndMethodLog( methodName );
+			LogMethodEnd();
 			}
 		private void _ShowVersionInfo()
 			{
@@ -1137,16 +1097,16 @@ namespace Hslab.WaveguideDesigner
 
 		/// <summary>メソッド開始のログ情報を書き出す。</summary>
 		/// <param name="methodFullName"></param>
-		public void WriteStartMethodLog(string methodFullName)
+		public void LogMethodStart([CallerMemberName]string methodName = "")
 			{
-			WriteLog( "--> " + methodFullName, true );
+			WriteLog( "--> " + methodName, true );
 			}
 
 		/// <summary>メソッド終了のログ情報を書き出す。</summary>
 		/// <param name="methodFullName"></param>
-		public void WriteEndMethodLog(string methodFullName)
+		public void LogMethodEnd([CallerMemberName]string methodName = "")
 			{
-			WriteLog( "<-- " + methodFullName, true );
+			WriteLog( "<-- " + methodName, true );
 			}
 
 		/// <summary>指定回数分のインデントを取得する。</summary>
